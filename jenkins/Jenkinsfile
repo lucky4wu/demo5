@@ -21,6 +21,7 @@ pipeline {
             steps {
                 sh 'gradle bootrun'
                 sh 'gradle bootjar'
+                sh 'docker build -t spring-boot-docker .'
             }
         }
     }
