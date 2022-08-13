@@ -9,17 +9,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'gradlew clean'
+                sh 'gradle clean'
             }
         }
         stage('Test') {
             steps {
-                sh 'gradlew build'
+                sh 'gradle build'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'gradlew bootjar'
+                sh 'gradle bootjar'
                 sh 'docker build -t spring-boot-docker .'
             }
         }
