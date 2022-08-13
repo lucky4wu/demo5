@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
                     image 'gradle:jdk17-jammy'
-                    args '-v /root/.gradle:/root/.gradle'
+                    args '-v /root/.m2:/root/.m2'
                 }
     }
 
