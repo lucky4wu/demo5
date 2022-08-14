@@ -61,5 +61,5 @@ pipeline {
 }
 
 def gradlew(String... args) {
-    sh "gralde ${args.join(' ')} -s"
+    sh "gradle ${args.join(' ')} -s"
 }
