@@ -7,23 +7,64 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
-            steps {
-                sh 'gradle clean classes'
+        stage('Compile') {
+                steps {
+                    gradlew('clean', 'classes')
+                }
             }
-        }
-        stage('Test') {
-            steps {
-                //sh 'gradle build'
-                sh 'gradle :'
+        stage('Unit Tests') {
+                steps {
+                    gradlew('test')
+                }
+                post {
+                    always {
+                        junit '**/build/test-results/test/TEST-*.xml'
+                    }
+                }
             }
-        }
+        stage('Long-running Verification') {
+                environment {
+                    SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+                }
+                parallel {
+                    stage('Integration Tests') {
+                        steps {
+                            gradlew('integrationTest')
+                        }
+                        post {
+                            always {
+                                junit '**/build/test-results/integrationTest/TEST-*.xml'
+                            }
+                        }
+                    }
+                    stage('Code Analysis') {
+                        steps {
+                            gradlew('sonarqube')
+                        }
+                    }
+                }
+            }
+        stage('Assemble') {
+                    steps {
+                        gradlew('assemble')
+                        stash includes: '**/build/libs/*.jar', name: 'app'
+                    }
+                }
+                stage('Promotion') {
+                    steps {
+                        timeout(time: 1, unit:'DAYS') {
+                            input 'Deploy to Production?'
+                        }
+                    }
+                }
         stage('Deploy') {
             steps {
-                sh 'gradle bootjar'
                 sh 'docker build -t spring-boot-docker .'
-                sh 'docker run -p 8082:8082 spring-boot-docker:latest'
             }
         }
     }
+}
+
+def gradlew(String... args) {
+    sh "./gradlew ${args.join(' ')} -s"
 }
