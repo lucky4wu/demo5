@@ -14,13 +14,15 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'gradle build'
+                //sh 'gradle build'
+                sh 'gradle :'
             }
         }
         stage('Deploy') {
             steps {
                 sh 'gradle bootjar'
                 sh 'docker build -t spring-boot-docker .'
+                sh 'docker run -p 8082:8082 spring-boot-docker:latest'
             }
         }
     }
