@@ -62,5 +62,6 @@ pipeline {
 
 def gradlew(String... args) {
     sh 'pwd'
+    sh 'sudo chmod +x gradlew'
     sh "./gradlew ${args.join(' ')} -s"
 }
