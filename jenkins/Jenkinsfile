@@ -8,7 +8,6 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'sudo chmod +x gradlew'
-                sh 'java -version'
                 sh 'printenv'
             }
 
