@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.7.2'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'java'
+    id 'maven-publish'
 }
 
 group = 'com.example'
@@ -10,9 +11,18 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
+    maven {
+        name = 'myRepo'
+        url = "https://accendl-maven.pkg.coding.net/repository/mymavenrepo/demo1/"
+        credentials {
+            username "demo1-1660635423080"
+            password "be1f6f4f5cfef376f0454a336a5865fb73b891f0"
+        }
+    }
 }
 
 dependencies {
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -23,6 +33,34 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-jar {
-    enabled = false
+publishing {
+    publications {
+        myLibrary(MavenPublication) {
+            artifact tasks.named("jar")
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'myRepo'
+            url = "https://accendl-maven.pkg.coding.net/repository/mymavenrepo/demo1/"
+            credentials {
+                username "demo1-1660635423080"
+                password "be1f6f4f5cfef376f0454a336a5865fb73b891f0"
+            }
+        }
+    }
+}
+
+java {
+    //withJavadocJar()
+   // withSourcesJar()
+}
+
+tasks.named("bootJar") {
+    archiveClassifier = 'boot'
+}
+
+tasks.named("jar") {
+    archiveClassifier = ''
 }

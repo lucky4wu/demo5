@@ -50,21 +50,22 @@ pipeline {
 //                 }
 //             }
         stage('Assemble') {
-                    steps {
-                        gradlew('assemble')
-                        stash includes: '**/build/libs/*.jar', name: 'app'
-                    }
+            steps {
+                gradlew('assemble')
+                gradlew('publish')
+                stash includes: '**/build/libs/*.jar', name: 'app'
+            }
+        }
+        stage('Promotion') {
+            steps {
+                timeout(time: 1, unit:'DAYS') {
+                    input 'Deploy to Production?'
                 }
-                stage('Promotion') {
-                    steps {
-                        timeout(time: 1, unit:'DAYS') {
-                            input 'Deploy to Production?'
-                        }
-                    }
-                }
+            }
+        }
         stage('Deploy') {
             steps {
-                sh 'docker build -t spring-boot-docker .'
+                sh 'docker build -t accendl/spring-boot-docker .'
             }
         }
     }
